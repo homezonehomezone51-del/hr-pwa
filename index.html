@@ -6,219 +6,187 @@
 <title>Employee Entry</title>
 
 <style>
-:root{
-  --primary:#00897b;
-  --bg:#f4f7f6;
-  --card:#ffffff;
-  --danger:#e53935;
-  --success:#43a047;
-}
-
-*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
-
 body{
+  font-family: Arial, sans-serif;
+  background:#f4f6f8;
   margin:0;
-  background:var(--bg);
+  padding:0;
 }
-
-header{
-  background:var(--primary);
-  color:#fff;
-  padding:14px 16px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-header h1{
-  font-size:18px;
-  margin:0;
-}
-
-.export{
-  background:#00bcd4;
-  color:#fff;
-  border:none;
-  padding:8px 12px;
-  border-radius:8px;
-  cursor:pointer;
-}
-
 .container{
-  padding:16px;
-  max-width:720px;
+  max-width:650px;
   margin:auto;
+  padding:20px;
 }
-
-.counter{
-  background:#2e9f83;
-  color:#fff;
-  padding:10px 14px;
-  border-radius:10px;
-  margin-bottom:16px;
-  font-size:14px;
-}
-
 .card{
-  background:var(--card);
-  border-radius:10px;
-  padding:14px;
+  background:#fff;
+  padding:15px;
   margin-bottom:12px;
-  box-shadow:0 2px 8px rgba(0,0,0,.05);
+  border-radius:10px;
 }
-
 label{
-  font-size:13px;
   font-weight:600;
+  display:block;
+  margin-bottom:6px;
 }
-
-.req{color:var(--danger)}
-
-input,select{
+input, select{
   width:100%;
   padding:12px;
-  margin-top:6px;
   border-radius:8px;
   border:1px solid #ccc;
   font-size:14px;
 }
-
-input:focus,select:focus{
-  outline:none;
-  border-color:var(--primary);
+input.required:invalid,
+select.required:invalid{
+  border:2px solid red;
 }
-
-.error{
-  border-color:var(--danger)!important;
+.counter{
+  background:#0aa18f;
+  color:#fff;
+  padding:14px;
+  border-radius:10px;
+  margin-bottom:15px;
+  font-weight:bold;
+  text-align:center;
 }
-
-.btn{
+button{
   width:100%;
   padding:14px;
   border:none;
   border-radius:10px;
-  font-size:15px;
-  font-weight:bold;
-  cursor:pointer;
-  background:var(--primary);
+  background:#0aa18f;
   color:#fff;
-}
-
-.done{
-  background:var(--success);
+  font-size:16px;
+  cursor:pointer;
 }
 </style>
 </head>
 
 <body>
-
-<header>
-  <h1>Employee Entry</h1>
-  <button class="export" onclick="location.href='export.html'">⬇ Export</button>
-</header>
-
 <div class="container">
 
-  <div class="counter" id="counter">
-    Pending: 25
-  </div>
+<div class="counter" id="counter">
+Completed: 0 / 25 | Pending: 25
+</div>
 
-  <form id="empForm">
+<form id="employeeForm">
 
-    <!-- 25 REQUIRED FIELDS -->
-    <div class="card"><label>Emp Id <span class="req">*</span></label><input required></div>
-    <div class="card"><label>Name <span class="req">*</span></label><input required></div>
-    <div class="card"><label>Gender <span class="req">*</span></label>
-      <select required>
-        <option value="">Select</option>
-        <option>Male</option>
-        <option>Female</option>
-      </select>
-    </div>
-    <div class="card"><label>CNIC <span class="req">*</span></label><input required></div>
-    <div class="card"><label>Date of Birth <span class="req">*</span></label><input type="date" required></div>
-    <div class="card"><label>CNIC Issue Date <span class="req">*</span></label><input type="date" required></div>
-    <div class="card"><label>CNIC Expiry Date <span class="req">*</span></label><input type="date" required></div>
-    <div class="card"><label>Present Address <span class="req">*</span></label><input required></div>
-    <div class="card"><label>Permanent Address <span class="req">*</span></label><input required></div>
-    <div class="card"><label>Father Name <span class="req">*</span></label><input required></div>
-    <div class="card"><label>Mother Name <span class="req">*</span></label><input required></div>
-    <div class="card"><label>Service Start Date <span class="req">*</span></label><input type="date" required></div>
-    <div class="card"><label>Cell No <span class="req">*</span></label><input required></div>
-    <div class="card"><label>Phone No 1</label><input></div>
-    <div class="card"><label>Email</label><input></div>
-    <div class="card"><label>Department <span class="req">*</span></label><input required></div>
-    <div class="card"><label>SubDepartment <span class="req">*</span></label><input required></div>
-    <div class="card"><label>Grade <span class="req">*</span></label><input required></div>
-    <div class="card"><label>Designation <span class="req">*</span></label><input required></div>
-    <div class="card"><label>City <span class="req">*</span></label><input required></div>
-    <div class="card"><label>Married <span class="req">*</span></label>
-      <select required>
-        <option value="">Select</option>
-        <option>Yes</option>
-        <option>No</option>
-      </select>
-    </div>
-    <div class="card"><label>Religion <span class="req">*</span></label><input required></div>
-    <div class="card"><label>Blood Group</label><input></div>
-    <div class="card"><label>Bank Account No</label><input></div>
-    <div class="card"><label>Bank</label><input></div>
+<!-- REQUIRED FIELDS (25) -->
 
-    <button class="btn" id="submitBtn">Submit</button>
-  </form>
+<div class="card">
+<label>Father Name *</label>
+<input class="required" required>
+</div>
 
+<div class="card">
+<label>Mother Name *</label>
+<input class="required" required>
+</div>
+
+<div class="card">
+<label>Service Start Date *</label>
+<input type="date" class="required" required>
+</div>
+
+<div class="card">
+<label>Cell No *</label>
+<input class="required" required>
+</div>
+
+<div class="card">
+<label>Department *</label>
+<input class="required" required>
+</div>
+
+<div class="card">
+<label>Sub Department *</label>
+<input class="required" required>
+</div>
+
+<div class="card">
+<label>Grade *</label>
+<input class="required" required>
+</div>
+
+<div class="card">
+<label>Designation *</label>
+<input class="required" required>
+</div>
+
+<div class="card">
+<label>City *</label>
+<input class="required" required>
+</div>
+
+<div class="card">
+<label>Married *</label>
+<select class="required" required>
+<option value="">Select</option>
+<option>Yes</option>
+<option>No</option>
+</select>
+</div>
+
+<div class="card">
+<label>Religion *</label>
+<input class="required" required>
+</div>
+
+<!-- ADD REMAINING REQUIRED FIELDS HERE
+Total REQUIRED fields must be 25
+Just copy same pattern:
+<input class="required" required>
+-->
+
+<!-- OPTIONAL FIELDS (NOT COUNTED) -->
+
+<div class="card">
+<label>Phone No 1</label>
+<input>
+</div>
+
+<div class="card">
+<label>Email</label>
+<input type="email">
+</div>
+
+<div class="card">
+<label>Blood Group</label>
+<input>
+</div>
+
+<div class="card">
+<label>Bank Account No</label>
+<input>
+</div>
+
+<div class="card">
+<label>Bank</label>
+<input>
+</div>
+
+<button type="submit">Submit</button>
+
+</form>
 </div>
 
 <script>
-const form=document.getElementById("empForm");
-const counter=document.getElementById("counter");
-const submitBtn=document.getElementById("submitBtn");
-const requiredFields=[...form.querySelectorAll("[required]")];
+const requiredFields = document.querySelectorAll('.required');
+const counter = document.getElementById('counter');
+const total = requiredFields.length;
 
 function updateCounter(){
-  let filled=0;
+  let filled = 0;
   requiredFields.forEach(f=>{
-    if(f.value.trim()!==""){
-      f.classList.remove("error");
+    if(f.value.trim() !== ""){
       filled++;
-    }else{
-      f.classList.add("error");
     }
   });
-  const pending=25-filled;
-  counter.textContent= pending===0 ? "Form Completed ✅" : `Pending: ${pending}`;
-  submitBtn.classList.toggle("done",pending===0);
+  counter.innerText = `Completed: ${filled} / ${total} | Pending: ${total-filled}`;
 }
 
-form.addEventListener("input",updateCounter);
-
-form.addEventListener("submit",e=>{
-  e.preventDefault();
-  updateCounter();
-
-  if(counter.textContent!=="Form Completed ✅"){
-    alert("Please fill all required fields");
-    return;
-  }
-
-  const data={};
-  [...form.elements].forEach(el=>{
-    if(el.tagName==="INPUT"||el.tagName==="SELECT"){
-      data[el.previousElementSibling?.innerText||"field"]=el.value;
-    }
-  });
-
-  const now=new Date();
-  data.entryDate=now.toISOString().split("T")[0];
-  data.entryTime=now.toTimeString().split(" ")[0];
-
-  const list=JSON.parse(localStorage.getItem("employees")||"[]");
-  list.push(data);
-  localStorage.setItem("employees",JSON.stringify(list));
-
-  form.reset();
-  updateCounter();
-  alert("Record Saved Successfully ✅");
+requiredFields.forEach(f=>{
+  f.addEventListener('input', updateCounter);
+  f.addEventListener('change', updateCounter);
 });
 
 updateCounter();

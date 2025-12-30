@@ -1,21 +1,56 @@
 <!DOCTYPE html>
-<html><head><title>Export</title><meta name="viewport" content="width=device-width, initial-scale=1"></head>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Export Data</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{font-family:Arial;padding:12px}
+</style>
+</head>
+
 <body>
+
 <h2>Export Data</h2>
-From <input type="date"> To <input type="date">
-<p>Total Records: <span id="count">0</span></p>
-<button onclick="exp()">Export to CSV</button>
+
+From: <input type="date" id="from">
+To: <input type="date" id="to"><br><br>
+
+Total Records: <span id="total">0</span><br><br>
+
+<button onclick="exportCSV()">Export to CSV</button>
+
 <script>
-function exp(){
- const d=JSON.parse(localStorage.getItem("records")||"[]");
- document.getElementById("count").textContent=d.length;
- let c="";
- d.forEach(r=>c+=r.join(",")+"\n");
- const b=new Blob([c],{type:"text/csv"});
+function exportCSV(){
+ let data=JSON.parse(localStorage.getItem("hrData")||"[]");
+ const from=document.getElementById("from").value;
+ const to=document.getElementById("to").value;
+
+ if(!from||!to){alert("Select date range");return;}
+
+ const f=new Date(from), t=new Date(to);
+ const filtered=data.filter(r=>{
+   const d=new Date(r.entryDate);
+   return d>=f && d<=t;
+ });
+
+ document.getElementById("total").innerText=filtered.length;
+ if(!filtered.length){alert("No data");return;}
+
+ const headers=Object.keys(filtered[0]);
+ let csv=headers.join(",")+"\n";
+
+ filtered.forEach(r=>{
+   csv+=headers.map(h=>`"${r[h]||""}"`).join(",")+"\n";
+ });
+
+ const blob=new Blob([csv],{type:"text/csv"});
  const a=document.createElement("a");
- a.href=URL.createObjectURL(b);
+ a.href=URL.createObjectURL(blob);
  a.download="hr-data.csv";
  a.click();
 }
 </script>
-</body></html>
+
+</body>
+</html>

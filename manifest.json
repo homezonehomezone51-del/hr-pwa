@@ -1,0 +1,8 @@
+{
+ "name":"HR Entry App",
+ "short_name":"HR App",
+ "start_url":"index.html",
+ "display":"standalone",
+ "background_color":"#ffffff",
+ "theme_color":"#00796b"
+}

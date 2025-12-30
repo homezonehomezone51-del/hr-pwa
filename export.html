@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html><head><title>Export</title><meta name="viewport" content="width=device-width, initial-scale=1"></head>
+<body>
+<h2>Export Data</h2>
+From <input type="date"> To <input type="date">
+<p>Total Records: <span id="count">0</span></p>
+<button onclick="exp()">Export to CSV</button>
+<script>
+function exp(){
+ const d=JSON.parse(localStorage.getItem("records")||"[]");
+ document.getElementById("count").textContent=d.length;
+ let c="";
+ d.forEach(r=>c+=r.join(",")+"\n");
+ const b=new Blob([c],{type:"text/csv"});
+ const a=document.createElement("a");
+ a.href=URL.createObjectURL(b);
+ a.download="hr-data.csv";
+ a.click();
+}
+</script>
+</body></html>

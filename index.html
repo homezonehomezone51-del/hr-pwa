@@ -5,53 +5,109 @@
 <title>HR Entry App</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="manifest" href="manifest.json">
+
 <style>
-body{font-family:Arial;background:#f4f6f8;margin:0;padding:10px}
+body{font-family:Arial;background:#f4f6f8;margin:0;padding:12px}
 h2{text-align:center}
 .counter{font-weight:bold;text-align:center;margin-bottom:10px}
 .field{display:flex;align-items:center;margin-bottom:6px}
-.field label{width:45%;font-size:13px}
-.field input{flex:1;padding:5px}
-.icon{width:20px;text-align:center}
+.field label{width:45%;font-size:13px;text-align:left}
+.field input,.field select{flex:1;padding:6px}
+.icon{width:20px;text-align:center;color:red}
 button{width:100%;padding:10px;margin-top:10px;background:#00796b;color:#fff;border:none;font-size:16px}
 </style>
 </head>
+
 <body>
+
 <h2>HR Form</h2>
 <div class="counter">Pending: <span id="pending">25</span></div>
-<form id="form"></form>
-<button type="submit" form="form">Submit</button>
+
+<form id="hrForm"></form>
+
+<button type="submit" form="hrForm">Submit</button>
 <button onclick="location.href='export.html'">Export</button>
+
 <script>
-const fields=["Emp Id*","Name*","Gender*","CNIC*","Date of Birth*","CNIC Issue date*","CNIC Expiry Date*","Present Address*","Permanent Address*","Father Name*","Mother Name*","Service Start Date*","Cell No.*","Phone No 1","Email","Department*","SubDepartment*","Grade*","Designation*","City*","Married*","Religion*","Blood Group","Bank Account No","Bank"];
-const form=document.getElementById("form");
-const pending=document.getElementById("pending");
+const fields = [
+ {id:"empId",label:"Emp Id*"},
+ {id:"name",label:"Name*"},
+ {id:"gender",label:"Gender*"},
+ {id:"cnic",label:"CNIC*"},
+ {id:"dob",label:"Date of Birth*"},
+ {id:"cnicIssue",label:"CNIC Issue Date*"},
+ {id:"cnicExpiry",label:"CNIC Expiry Date*"},
+ {id:"presentAddress",label:"Present Address*"},
+ {id:"permanentAddress",label:"Permanent Address*"},
+ {id:"fatherName",label:"Father Name*"},
+ {id:"motherName",label:"Mother Name*"},
+ {id:"serviceStart",label:"Service Start Date*"},
+ {id:"cellNo",label:"Cell No*"},
+ {id:"phone1",label:"Phone No 1"},
+ {id:"email",label:"Email"},
+ {id:"department",label:"Department*"},
+ {id:"subDepartment",label:"SubDepartment*"},
+ {id:"grade",label:"Grade*"},
+ {id:"designation",label:"Designation*"},
+ {id:"city",label:"City*"},
+ {id:"married",label:"Married*"},
+ {id:"religion",label:"Religion*"},
+ {id:"bloodGroup",label:"Blood Group"},
+ {id:"bankAccount",label:"Bank Account No"},
+ {id:"bank",label:"Bank"}
+];
+
+const REQUIRED_COUNT = 25;
+const form = document.getElementById("hrForm");
+const pending = document.getElementById("pending");
+
 fields.forEach(f=>{
- const d=document.createElement("div");d.className="field";
- d.innerHTML=`<label>${f}</label><span class="icon">✖</span><input>`;
+ const d=document.createElement("div");
+ d.className="field";
+ d.innerHTML=`<label>${f.label}</label>
+ <input id="${f.id}">
+ <span class="icon" id="i_${f.id}">✖</span>`;
  form.appendChild(d);
+
+ d.querySelector("input").addEventListener("input",updateCounter);
 });
-function update(){
- let p=0;
- [...form.elements].forEach(e=>{
-  const i=e.previousElementSibling;
-  if(e.value.trim()){i.textContent="✔";i.style.color="green"}
-  else{i.textContent="✖";i.style.color="red";p++}
+
+function updateCounter(){
+ let filled=0;
+ fields.forEach(f=>{
+   const v=document.getElementById(f.id).value.trim();
+   document.getElementById("i_"+f.id).innerText=v?"✔":"✖";
+   if(v) filled++;
  });
- pending.textContent=p;
+ pending.innerText=REQUIRED_COUNT-filled;
 }
-form.oninput=update;
-form.onsubmit=e=>{
+
+form.addEventListener("submit",e=>{
  e.preventDefault();
- const r=[...form.elements].map(e=>e.value);
- const n=new Date();
- r.push(n.toLocaleDateString(),n.toLocaleTimeString());
- const a=JSON.parse(localStorage.getItem("records")||"[]");
- a.push(r);
- localStorage.setItem("records",JSON.stringify(a));
- form.reset();update();alert("Saved");
-}
-update();
+
+ for(let f of fields){
+   if(f.label.includes("*") && !document.getElementById(f.id).value.trim()){
+     alert("Please fill all mandatory fields");
+     document.getElementById(f.id).focus();
+     return;
+   }
+ }
+
+ const record={};
+ fields.forEach(f=>record[f.id]=document.getElementById(f.id).value);
+ record.entryDate=new Date().toISOString().split("T")[0];
+ record.entryTime=new Date().toLocaleTimeString();
+
+ let data=JSON.parse(localStorage.getItem("hrData")||"[]");
+ data.push(record);
+ localStorage.setItem("hrData",JSON.stringify(data));
+
+ alert("Record Saved");
+ form.reset();
+ updateCounter();
+});
+
+updateCounter();
 </script>
 </body>
 </html>

@@ -1,113 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>HR Entry App</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8" />
+<title>Employee Entry</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="manifest" href="manifest.json">
 
 <style>
-body{font-family:Arial;background:#f4f6f8;margin:0;padding:12px}
-h2{text-align:center}
-.counter{font-weight:bold;text-align:center;margin-bottom:10px}
-.field{display:flex;align-items:center;margin-bottom:6px}
-.field label{width:45%;font-size:13px;text-align:left}
-.field input,.field select{flex:1;padding:6px}
-.icon{width:20px;text-align:center;color:red}
-button{width:100%;padding:10px;margin-top:10px;background:#00796b;color:#fff;border:none;font-size:16px}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont;
+  background:#f1f5f9;
+}
+.header{
+  background:#0f766e;
+  color:#fff;
+  padding:16px;
+  border-bottom-left-radius:20px;
+  border-bottom-right-radius:20px;
+}
+.header h2{
+  margin:0;
+  font-size:20px;
+}
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:10px;
+}
+.badge{
+  background:#16a34a;
+  padding:6px 12px;
+  border-radius:999px;
+  font-size:13px;
+}
+.export-btn{
+  background:#0891b2;
+  border:none;
+  color:#fff;
+  padding:6px 12px;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+.container{
+  padding:14px;
+}
+.field{
+  background:#fff;
+  border-radius:14px;
+  padding:10px 12px;
+  margin-bottom:10px;
+  box-shadow:0 2px 6px rgba(0,0,0,.05);
+}
+.field label{
+  font-size:13px;
+  color:#374151;
+}
+.req{color:#dc2626}
+.field input, .field select{
+  width:100%;
+  border:none;
+  outline:none;
+  font-size:15px;
+  padding-top:6px;
+  background:transparent;
+}
+.field.invalid{
+  border:1px solid #dc2626;
+}
+.submit{
+  background:#0f766e;
+  color:#fff;
+  width:100%;
+  padding:14px;
+  font-size:16px;
+  border:none;
+  border-radius:14px;
+  margin-top:10px;
+  cursor:pointer;
+}
 </style>
 </head>
 
 <body>
 
-<h2>HR Form</h2>
-<div class="counter">Pending: <span id="pending">25</span></div>
+<div class="header">
+  <h2>Employee Entry</h2>
+  <div class="topbar">
+    <div class="badge">Pending <span id="pending">0</span></div>
+    <button class="export-btn" onclick="location.href='export.html'">Export</button>
+  </div>
+</div>
 
-<form id="hrForm"></form>
-
-<button type="submit" form="hrForm">Submit</button>
-<button onclick="location.href='export.html'">Export</button>
+<div class="container">
+  <form id="form"></form>
+  <button class="submit" type="submit" form="form">Submit</button>
+</div>
 
 <script>
-const fields = [
- {id:"empId",label:"Emp Id*"},
- {id:"name",label:"Name*"},
- {id:"gender",label:"Gender*"},
- {id:"cnic",label:"CNIC*"},
- {id:"dob",label:"Date of Birth*"},
- {id:"cnicIssue",label:"CNIC Issue Date*"},
- {id:"cnicExpiry",label:"CNIC Expiry Date*"},
- {id:"presentAddress",label:"Present Address*"},
- {id:"permanentAddress",label:"Permanent Address*"},
- {id:"fatherName",label:"Father Name*"},
- {id:"motherName",label:"Mother Name*"},
- {id:"serviceStart",label:"Service Start Date*"},
- {id:"cellNo",label:"Cell No*"},
- {id:"phone1",label:"Phone No 1"},
- {id:"email",label:"Email"},
- {id:"department",label:"Department*"},
- {id:"subDepartment",label:"SubDepartment*"},
- {id:"grade",label:"Grade*"},
- {id:"designation",label:"Designation*"},
- {id:"city",label:"City*"},
- {id:"married",label:"Married*"},
- {id:"religion",label:"Religion*"},
- {id:"bloodGroup",label:"Blood Group"},
- {id:"bankAccount",label:"Bank Account No"},
- {id:"bank",label:"Bank"}
+const fields=[
+"Business Unit","Emp ID","Name","Gender","CNIC",
+"Date of Birth","CNIC Issue Date","CNIC Expiry Date",
+"Present Address","Permanent Address"
 ];
 
-const REQUIRED_COUNT = 25;
-const form = document.getElementById("hrForm");
-const pending = document.getElementById("pending");
+const form=document.getElementById("form");
+const pendingEl=document.getElementById("pending");
 
-fields.forEach(f=>{
- const d=document.createElement("div");
- d.className="field";
- d.innerHTML=`<label>${f.label}</label>
- <input id="${f.id}">
- <span class="icon" id="i_${f.id}">✖</span>`;
- form.appendChild(d);
-
- d.querySelector("input").addEventListener("input",updateCounter);
-});
-
-function updateCounter(){
- let filled=0;
- fields.forEach(f=>{
-   const v=document.getElementById(f.id).value.trim();
-   document.getElementById("i_"+f.id).innerText=v?"✔":"✖";
-   if(v) filled++;
- });
- pending.innerText=REQUIRED_COUNT-filled;
+function updatePending(){
+  let pending=0;
+  document.querySelectorAll("input,select").forEach(i=>{
+    if(!i.value.trim()) pending++;
+  });
+  pendingEl.textContent=pending;
 }
 
-form.addEventListener("submit",e=>{
- e.preventDefault();
+fields.forEach(f=>{
+  const d=document.createElement("div");
+  d.className="field";
+  const type=f.includes("Date")?"date":f=="Gender"?"select":"text";
 
- for(let f of fields){
-   if(f.label.includes("*") && !document.getElementById(f.id).value.trim()){
-     alert("Please fill all mandatory fields");
-     document.getElementById(f.id).focus();
-     return;
-   }
- }
+  let inputHTML="";
+  if(type==="select"){
+    inputHTML=`<select><option value="">Select gender</option><option>Male</option><option>Female</option></select>`;
+  }else{
+    inputHTML=`<input type="${type}" />`;
+  }
 
- const record={};
- fields.forEach(f=>record[f.id]=document.getElementById(f.id).value);
- record.entryDate=new Date().toISOString().split("T")[0];
- record.entryTime=new Date().toLocaleTimeString();
-
- let data=JSON.parse(localStorage.getItem("hrData")||"[]");
- data.push(record);
- localStorage.setItem("hrData",JSON.stringify(data));
-
- alert("Record Saved");
- form.reset();
- updateCounter();
+  d.innerHTML=`
+    <label>${f} <span class="req">*</span></label>
+    ${inputHTML}
+  `;
+  const input=d.querySelector("input,select");
+  input.addEventListener("input",()=>{
+    d.classList.toggle("invalid",!input.value.trim());
+    updatePending();
+  });
+  d.classList.add("invalid");
+  form.appendChild(d);
 });
 
-updateCounter();
+updatePending();
+
+form.addEventListener("submit",e=>{
+  e.preventDefault();
+  alert("Data saved (local)");
+});
 </script>
+
 </body>
 </html>

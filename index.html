@@ -1,153 +1,258 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Employee Entry</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="manifest" href="manifest.json">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Employee Entry</title>
 
-<style>
-body{
-  margin:0;
-  font-family:system-ui,-apple-system,BlinkMacSystemFont;
-  background:#f1f5f9;
-}
-.header{
-  background:#0f766e;
-  color:#fff;
-  padding:16px;
-  border-bottom-left-radius:20px;
-  border-bottom-right-radius:20px;
-}
-.header h2{
-  margin:0;
-  font-size:20px;
-}
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-top:10px;
-}
-.badge{
-  background:#16a34a;
-  padding:6px 12px;
-  border-radius:999px;
-  font-size:13px;
-}
-.export-btn{
-  background:#0891b2;
-  border:none;
-  color:#fff;
-  padding:6px 12px;
-  border-radius:8px;
-  cursor:pointer;
-}
+  <!-- a0.dev inspired minimal UI -->
+  <style>
+    :root{
+      --primary:#0f766e;
+      --primary-soft:#14b8a6;
+      --bg:#f8fafc;
+      --card:#ffffff;
+      --danger:#ef4444;
+      --success:#22c55e;
+      --text:#0f172a;
+      --muted:#64748b;
+      --radius:14px;
+    }
 
-.container{
-  padding:14px;
-}
-.field{
-  background:#fff;
-  border-radius:14px;
-  padding:10px 12px;
-  margin-bottom:10px;
-  box-shadow:0 2px 6px rgba(0,0,0,.05);
-}
-.field label{
-  font-size:13px;
-  color:#374151;
-}
-.req{color:#dc2626}
-.field input, .field select{
-  width:100%;
-  border:none;
-  outline:none;
-  font-size:15px;
-  padding-top:6px;
-  background:transparent;
-}
-.field.invalid{
-  border:1px solid #dc2626;
-}
-.submit{
-  background:#0f766e;
-  color:#fff;
-  width:100%;
-  padding:14px;
-  font-size:16px;
-  border:none;
-  border-radius:14px;
-  margin-top:10px;
-  cursor:pointer;
-}
-</style>
+    *{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,sans-serif}
+
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    header{
+      background:var(--primary);
+      color:#fff;
+      padding:18px 22px;
+      font-size:20px;
+      font-weight:600;
+      position:sticky;
+      top:0;
+      z-index:10;
+    }
+
+    .container{
+      max-width:900px;
+      margin:30px auto;
+      padding:0 16px 80px;
+    }
+
+    .card{
+      background:var(--card);
+      border-radius:var(--radius);
+      box-shadow:0 10px 30px rgba(0,0,0,.06);
+      padding:24px;
+    }
+
+    .section{
+      margin-bottom:28px;
+    }
+
+    .section h3{
+      margin:0 0 14px;
+      font-size:16px;
+      color:var(--primary);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+      gap:16px;
+    }
+
+    label{
+      font-size:13px;
+      color:var(--muted);
+      display:block;
+      margin-bottom:6px;
+    }
+
+    input,select{
+      width:100%;
+      padding:12px 14px;
+      border-radius:12px;
+      border:1.8px solid #e5e7eb;
+      outline:none;
+      font-size:14px;
+      transition:.2s;
+    }
+
+    input:focus,select:focus{
+      border-color:var(--primary-soft);
+      box-shadow:0 0 0 3px rgba(20,184,166,.15);
+    }
+
+    input.invalid,select.invalid{border-color:var(--danger)}
+    input.valid,select.valid{border-color:var(--success)}
+
+    .status{
+      margin-bottom:18px;
+      padding:14px 18px;
+      border-radius:14px;
+      font-weight:600;
+    }
+    .pending{background:#fff7ed;color:#9a3412}
+    .done{background:#ecfdf5;color:#065f46}
+
+    .footer{
+      position:fixed;
+      left:0;right:0;bottom:0;
+      background:#ffffffcc;
+      backdrop-filter:blur(8px);
+      padding:14px;
+      border-top:1px solid #e5e7eb;
+    }
+
+    .submit{
+      width:100%;
+      padding:14px;
+      border-radius:16px;
+      border:none;
+      background:var(--primary-soft);
+      color:#fff;
+      font-size:16px;
+      font-weight:600;
+      cursor:not-allowed;
+      opacity:.6;
+    }
+
+    .submit.enabled{
+      cursor:pointer;
+      opacity:1;
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="header">
-  <h2>Employee Entry</h2>
-  <div class="topbar">
-    <div class="badge">Pending <span id="pending">0</span></div>
-    <button class="export-btn" onclick="location.href='export.html'">Export</button>
+<header>Employee Entry</header>
+
+<div class="container">
+  <div id="formStatus" class="status pending">⏳ Form Incomplete (0 / 25)</div>
+
+  <div class="card">
+
+    <!-- PERSONAL -->
+    <div class="section">
+      <h3>Personal Information</h3>
+      <div class="grid">
+        <div><label>Emp ID *</label><input id="empId"></div>
+        <div><label>Name *</label><input id="name"></div>
+        <div><label>Gender *</label><select id="gender"><option value="">Select</option><option>Male</option><option>Female</option></select></div>
+        <div><label>CNIC *</label><input id="cnic"></div>
+        <div><label>Date of Birth *</label><input type="date" id="dob"></div>
+        <div><label>CNIC Issue Date *</label><input type="date" id="cnicIssue"></div>
+        <div><label>CNIC Expiry Date *</label><input type="date" id="cnicExpiry"></div>
+      </div>
+    </div>
+
+    <!-- ADDRESS -->
+    <div class="section">
+      <h3>Address</h3>
+      <div class="grid">
+        <div><label>Present Address *</label><input id="presentAddress"></div>
+        <div><label>Permanent Address *</label><input id="permanentAddress"></div>
+        <div><label>City *</label><input id="city"></div>
+      </div>
+    </div>
+
+    <!-- FAMILY -->
+    <div class="section">
+      <h3>Family</h3>
+      <div class="grid">
+        <div><label>Father Name *</label><input id="fatherName"></div>
+        <div><label>Mother Name *</label><input id="motherName"></div>
+        <div><label>Married *</label><select id="married"><option value="">Select</option><option>Yes</option><option>No</option></select></div>
+        <div><label>Religion *</label><input id="religion"></div>
+        <div><label>Blood Group *</label><input id="bloodGroup"></div>
+      </div>
+    </div>
+
+    <!-- JOB -->
+    <div class="section">
+      <h3>Job Details</h3>
+      <div class="grid">
+        <div><label>Service Start Date *</label><input type="date" id="serviceStart"></div>
+        <div><label>Department *</label><input id="department"></div>
+        <div><label>Sub Department *</label><input id="subDepartment"></div>
+        <div><label>Grade *</label><input id="grade"></div>
+        <div><label>Designation *</label><input id="designation"></div>
+      </div>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="section">
+      <h3>Contact</h3>
+      <div class="grid">
+        <div><label>Cell No *</label><input id="cellNo"></div>
+        <div><label>Phone No 1 *</label><input id="phone1"></div>
+        <div><label>Email *</label><input id="email"></div>
+      </div>
+    </div>
+
+    <!-- BANK -->
+    <div class="section">
+      <h3>Bank</h3>
+      <div class="grid">
+        <div><label>Bank Account No *</label><input id="bankAccount"></div>
+        <div><label>Bank *</label><input id="bank"></div>
+      </div>
+    </div>
+
   </div>
 </div>
 
-<div class="container">
-  <form id="form"></form>
-  <button class="submit" type="submit" form="form">Submit</button>
+<div class="footer">
+  <button id="submitBtn" class="submit">Submit (Complete all 25 fields)</button>
 </div>
 
 <script>
-const fields=[
-"Business Unit","Emp ID","Name","Gender","CNIC",
-"Date of Birth","CNIC Issue Date","CNIC Expiry Date",
-"Present Address","Permanent Address"
-];
+  const requiredFields = [
+    "empId","name","gender","cnic","dob","cnicIssue","cnicExpiry",
+    "presentAddress","permanentAddress","fatherName","motherName",
+    "serviceStart","cellNo","phone1","email","department","subDepartment",
+    "grade","designation","city","married","religion","bloodGroup",
+    "bankAccount","bank"
+  ];
 
-const form=document.getElementById("form");
-const pendingEl=document.getElementById("pending");
+  function checkForm(){
+    let filled = 0;
 
-function updatePending(){
-  let pending=0;
-  document.querySelectorAll("input,select").forEach(i=>{
-    if(!i.value.trim()) pending++;
-  });
-  pendingEl.textContent=pending;
-}
+    requiredFields.forEach(id=>{
+      const el = document.getElementById(id);
+      if(el.value.trim() !== ""){
+        el.classList.add("valid");
+        el.classList.remove("invalid");
+        filled++;
+      }else{
+        el.classList.add("invalid");
+        el.classList.remove("valid");
+      }
+    });
 
-fields.forEach(f=>{
-  const d=document.createElement("div");
-  d.className="field";
-  const type=f.includes("Date")?"date":f=="Gender"?"select":"text";
+    const status = document.getElementById("formStatus");
+    const btn = document.getElementById("submitBtn");
 
-  let inputHTML="";
-  if(type==="select"){
-    inputHTML=`<select><option value="">Select gender</option><option>Male</option><option>Female</option></select>`;
-  }else{
-    inputHTML=`<input type="${type}" />`;
+    if(filled === requiredFields.length){
+      status.textContent = "✅ Form Completed (25 / 25)";
+      status.className = "status done";
+      btn.classList.add("enabled");
+      btn.disabled = false;
+    }else{
+      status.textContent = `⏳ Form Incomplete (${filled} / 25)`;
+      status.className = "status pending";
+      btn.classList.remove("enabled");
+      btn.disabled = true;
+    }
   }
 
-  d.innerHTML=`
-    <label>${f} <span class="req">*</span></label>
-    ${inputHTML}
-  `;
-  const input=d.querySelector("input,select");
-  input.addEventListener("input",()=>{
-    d.classList.toggle("invalid",!input.value.trim());
-    updatePending();
-  });
-  d.classList.add("invalid");
-  form.appendChild(d);
-});
-
-updatePending();
-
-form.addEventListener("submit",e=>{
-  e.preventDefault();
-  alert("Data saved (local)");
-});
+  document.addEventListener("input",checkForm);
 </script>
 
 </body>

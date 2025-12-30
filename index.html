@@ -1,258 +1,227 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Employee Entry</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Employee Entry</title>
 
-  <!-- a0.dev inspired minimal UI -->
-  <style>
-    :root{
-      --primary:#0f766e;
-      --primary-soft:#14b8a6;
-      --bg:#f8fafc;
-      --card:#ffffff;
-      --danger:#ef4444;
-      --success:#22c55e;
-      --text:#0f172a;
-      --muted:#64748b;
-      --radius:14px;
-    }
+<style>
+:root{
+  --primary:#00897b;
+  --bg:#f4f7f6;
+  --card:#ffffff;
+  --danger:#e53935;
+  --success:#43a047;
+}
 
-    *{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,sans-serif}
+*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
 
-    body{
-      margin:0;
-      background:var(--bg);
-      color:var(--text);
-    }
+body{
+  margin:0;
+  background:var(--bg);
+}
 
-    header{
-      background:var(--primary);
-      color:#fff;
-      padding:18px 22px;
-      font-size:20px;
-      font-weight:600;
-      position:sticky;
-      top:0;
-      z-index:10;
-    }
+header{
+  background:var(--primary);
+  color:#fff;
+  padding:14px 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
 
-    .container{
-      max-width:900px;
-      margin:30px auto;
-      padding:0 16px 80px;
-    }
+header h1{
+  font-size:18px;
+  margin:0;
+}
 
-    .card{
-      background:var(--card);
-      border-radius:var(--radius);
-      box-shadow:0 10px 30px rgba(0,0,0,.06);
-      padding:24px;
-    }
+.export{
+  background:#00bcd4;
+  color:#fff;
+  border:none;
+  padding:8px 12px;
+  border-radius:8px;
+  cursor:pointer;
+}
 
-    .section{
-      margin-bottom:28px;
-    }
+.container{
+  padding:16px;
+  max-width:720px;
+  margin:auto;
+}
 
-    .section h3{
-      margin:0 0 14px;
-      font-size:16px;
-      color:var(--primary);
-    }
+.counter{
+  background:#2e9f83;
+  color:#fff;
+  padding:10px 14px;
+  border-radius:10px;
+  margin-bottom:16px;
+  font-size:14px;
+}
 
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-      gap:16px;
-    }
+.card{
+  background:var(--card);
+  border-radius:10px;
+  padding:14px;
+  margin-bottom:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.05);
+}
 
-    label{
-      font-size:13px;
-      color:var(--muted);
-      display:block;
-      margin-bottom:6px;
-    }
+label{
+  font-size:13px;
+  font-weight:600;
+}
 
-    input,select{
-      width:100%;
-      padding:12px 14px;
-      border-radius:12px;
-      border:1.8px solid #e5e7eb;
-      outline:none;
-      font-size:14px;
-      transition:.2s;
-    }
+.req{color:var(--danger)}
 
-    input:focus,select:focus{
-      border-color:var(--primary-soft);
-      box-shadow:0 0 0 3px rgba(20,184,166,.15);
-    }
+input,select{
+  width:100%;
+  padding:12px;
+  margin-top:6px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  font-size:14px;
+}
 
-    input.invalid,select.invalid{border-color:var(--danger)}
-    input.valid,select.valid{border-color:var(--success)}
+input:focus,select:focus{
+  outline:none;
+  border-color:var(--primary);
+}
 
-    .status{
-      margin-bottom:18px;
-      padding:14px 18px;
-      border-radius:14px;
-      font-weight:600;
-    }
-    .pending{background:#fff7ed;color:#9a3412}
-    .done{background:#ecfdf5;color:#065f46}
+.error{
+  border-color:var(--danger)!important;
+}
 
-    .footer{
-      position:fixed;
-      left:0;right:0;bottom:0;
-      background:#ffffffcc;
-      backdrop-filter:blur(8px);
-      padding:14px;
-      border-top:1px solid #e5e7eb;
-    }
+.btn{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:10px;
+  font-size:15px;
+  font-weight:bold;
+  cursor:pointer;
+  background:var(--primary);
+  color:#fff;
+}
 
-    .submit{
-      width:100%;
-      padding:14px;
-      border-radius:16px;
-      border:none;
-      background:var(--primary-soft);
-      color:#fff;
-      font-size:16px;
-      font-weight:600;
-      cursor:not-allowed;
-      opacity:.6;
-    }
-
-    .submit.enabled{
-      cursor:pointer;
-      opacity:1;
-    }
-  </style>
+.done{
+  background:var(--success);
+}
+</style>
 </head>
+
 <body>
 
-<header>Employee Entry</header>
+<header>
+  <h1>Employee Entry</h1>
+  <button class="export" onclick="location.href='export.html'">⬇ Export</button>
+</header>
 
 <div class="container">
-  <div id="formStatus" class="status pending">⏳ Form Incomplete (0 / 25)</div>
 
-  <div class="card">
-
-    <!-- PERSONAL -->
-    <div class="section">
-      <h3>Personal Information</h3>
-      <div class="grid">
-        <div><label>Emp ID *</label><input id="empId"></div>
-        <div><label>Name *</label><input id="name"></div>
-        <div><label>Gender *</label><select id="gender"><option value="">Select</option><option>Male</option><option>Female</option></select></div>
-        <div><label>CNIC *</label><input id="cnic"></div>
-        <div><label>Date of Birth *</label><input type="date" id="dob"></div>
-        <div><label>CNIC Issue Date *</label><input type="date" id="cnicIssue"></div>
-        <div><label>CNIC Expiry Date *</label><input type="date" id="cnicExpiry"></div>
-      </div>
-    </div>
-
-    <!-- ADDRESS -->
-    <div class="section">
-      <h3>Address</h3>
-      <div class="grid">
-        <div><label>Present Address *</label><input id="presentAddress"></div>
-        <div><label>Permanent Address *</label><input id="permanentAddress"></div>
-        <div><label>City *</label><input id="city"></div>
-      </div>
-    </div>
-
-    <!-- FAMILY -->
-    <div class="section">
-      <h3>Family</h3>
-      <div class="grid">
-        <div><label>Father Name *</label><input id="fatherName"></div>
-        <div><label>Mother Name *</label><input id="motherName"></div>
-        <div><label>Married *</label><select id="married"><option value="">Select</option><option>Yes</option><option>No</option></select></div>
-        <div><label>Religion *</label><input id="religion"></div>
-        <div><label>Blood Group *</label><input id="bloodGroup"></div>
-      </div>
-    </div>
-
-    <!-- JOB -->
-    <div class="section">
-      <h3>Job Details</h3>
-      <div class="grid">
-        <div><label>Service Start Date *</label><input type="date" id="serviceStart"></div>
-        <div><label>Department *</label><input id="department"></div>
-        <div><label>Sub Department *</label><input id="subDepartment"></div>
-        <div><label>Grade *</label><input id="grade"></div>
-        <div><label>Designation *</label><input id="designation"></div>
-      </div>
-    </div>
-
-    <!-- CONTACT -->
-    <div class="section">
-      <h3>Contact</h3>
-      <div class="grid">
-        <div><label>Cell No *</label><input id="cellNo"></div>
-        <div><label>Phone No 1 *</label><input id="phone1"></div>
-        <div><label>Email *</label><input id="email"></div>
-      </div>
-    </div>
-
-    <!-- BANK -->
-    <div class="section">
-      <h3>Bank</h3>
-      <div class="grid">
-        <div><label>Bank Account No *</label><input id="bankAccount"></div>
-        <div><label>Bank *</label><input id="bank"></div>
-      </div>
-    </div>
-
+  <div class="counter" id="counter">
+    Pending: 25
   </div>
-</div>
 
-<div class="footer">
-  <button id="submitBtn" class="submit">Submit (Complete all 25 fields)</button>
+  <form id="empForm">
+
+    <!-- 25 REQUIRED FIELDS -->
+    <div class="card"><label>Emp Id <span class="req">*</span></label><input required></div>
+    <div class="card"><label>Name <span class="req">*</span></label><input required></div>
+    <div class="card"><label>Gender <span class="req">*</span></label>
+      <select required>
+        <option value="">Select</option>
+        <option>Male</option>
+        <option>Female</option>
+      </select>
+    </div>
+    <div class="card"><label>CNIC <span class="req">*</span></label><input required></div>
+    <div class="card"><label>Date of Birth <span class="req">*</span></label><input type="date" required></div>
+    <div class="card"><label>CNIC Issue Date <span class="req">*</span></label><input type="date" required></div>
+    <div class="card"><label>CNIC Expiry Date <span class="req">*</span></label><input type="date" required></div>
+    <div class="card"><label>Present Address <span class="req">*</span></label><input required></div>
+    <div class="card"><label>Permanent Address <span class="req">*</span></label><input required></div>
+    <div class="card"><label>Father Name <span class="req">*</span></label><input required></div>
+    <div class="card"><label>Mother Name <span class="req">*</span></label><input required></div>
+    <div class="card"><label>Service Start Date <span class="req">*</span></label><input type="date" required></div>
+    <div class="card"><label>Cell No <span class="req">*</span></label><input required></div>
+    <div class="card"><label>Phone No 1</label><input></div>
+    <div class="card"><label>Email</label><input></div>
+    <div class="card"><label>Department <span class="req">*</span></label><input required></div>
+    <div class="card"><label>SubDepartment <span class="req">*</span></label><input required></div>
+    <div class="card"><label>Grade <span class="req">*</span></label><input required></div>
+    <div class="card"><label>Designation <span class="req">*</span></label><input required></div>
+    <div class="card"><label>City <span class="req">*</span></label><input required></div>
+    <div class="card"><label>Married <span class="req">*</span></label>
+      <select required>
+        <option value="">Select</option>
+        <option>Yes</option>
+        <option>No</option>
+      </select>
+    </div>
+    <div class="card"><label>Religion <span class="req">*</span></label><input required></div>
+    <div class="card"><label>Blood Group</label><input></div>
+    <div class="card"><label>Bank Account No</label><input></div>
+    <div class="card"><label>Bank</label><input></div>
+
+    <button class="btn" id="submitBtn">Submit</button>
+  </form>
+
 </div>
 
 <script>
-  const requiredFields = [
-    "empId","name","gender","cnic","dob","cnicIssue","cnicExpiry",
-    "presentAddress","permanentAddress","fatherName","motherName",
-    "serviceStart","cellNo","phone1","email","department","subDepartment",
-    "grade","designation","city","married","religion","bloodGroup",
-    "bankAccount","bank"
-  ];
+const form=document.getElementById("empForm");
+const counter=document.getElementById("counter");
+const submitBtn=document.getElementById("submitBtn");
+const requiredFields=[...form.querySelectorAll("[required]")];
 
-  function checkForm(){
-    let filled = 0;
-
-    requiredFields.forEach(id=>{
-      const el = document.getElementById(id);
-      if(el.value.trim() !== ""){
-        el.classList.add("valid");
-        el.classList.remove("invalid");
-        filled++;
-      }else{
-        el.classList.add("invalid");
-        el.classList.remove("valid");
-      }
-    });
-
-    const status = document.getElementById("formStatus");
-    const btn = document.getElementById("submitBtn");
-
-    if(filled === requiredFields.length){
-      status.textContent = "✅ Form Completed (25 / 25)";
-      status.className = "status done";
-      btn.classList.add("enabled");
-      btn.disabled = false;
+function updateCounter(){
+  let filled=0;
+  requiredFields.forEach(f=>{
+    if(f.value.trim()!==""){
+      f.classList.remove("error");
+      filled++;
     }else{
-      status.textContent = `⏳ Form Incomplete (${filled} / 25)`;
-      status.className = "status pending";
-      btn.classList.remove("enabled");
-      btn.disabled = true;
+      f.classList.add("error");
     }
+  });
+  const pending=25-filled;
+  counter.textContent= pending===0 ? "Form Completed ✅" : `Pending: ${pending}`;
+  submitBtn.classList.toggle("done",pending===0);
+}
+
+form.addEventListener("input",updateCounter);
+
+form.addEventListener("submit",e=>{
+  e.preventDefault();
+  updateCounter();
+
+  if(counter.textContent!=="Form Completed ✅"){
+    alert("Please fill all required fields");
+    return;
   }
 
-  document.addEventListener("input",checkForm);
+  const data={};
+  [...form.elements].forEach(el=>{
+    if(el.tagName==="INPUT"||el.tagName==="SELECT"){
+      data[el.previousElementSibling?.innerText||"field"]=el.value;
+    }
+  });
+
+  const now=new Date();
+  data.entryDate=now.toISOString().split("T")[0];
+  data.entryTime=now.toTimeString().split(" ")[0];
+
+  const list=JSON.parse(localStorage.getItem("employees")||"[]");
+  list.push(data);
+  localStorage.setItem("employees",JSON.stringify(list));
+
+  form.reset();
+  updateCounter();
+  alert("Record Saved Successfully ✅");
+});
+
+updateCounter();
 </script>
 
 </body>

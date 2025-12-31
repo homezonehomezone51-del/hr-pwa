@@ -2,194 +2,141 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Employee Entry</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 <style>
-body{
-  font-family: Arial, sans-serif;
-  background:#f4f6f8;
-  margin:0;
-  padding:0;
-}
-.container{
-  max-width:650px;
-  margin:auto;
-  padding:20px;
-}
-.card{
-  background:#fff;
-  padding:15px;
-  margin-bottom:12px;
-  border-radius:10px;
-}
-label{
-  font-weight:600;
-  display:block;
-  margin-bottom:6px;
-}
-input, select{
-  width:100%;
-  padding:12px;
-  border-radius:8px;
-  border:1px solid #ccc;
-  font-size:14px;
-}
-input.required:invalid,
-select.required:invalid{
-  border:2px solid red;
-}
-.counter{
-  background:#0aa18f;
-  color:#fff;
-  padding:14px;
-  border-radius:10px;
-  margin-bottom:15px;
-  font-weight:bold;
-  text-align:center;
-}
-button{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:10px;
-  background:#0aa18f;
-  color:#fff;
-  font-size:16px;
-  cursor:pointer;
-}
+body{margin:0;font-family:system-ui;background:#f4f6f8}
+header{background:#0f766e;color:#fff;padding:16px}
+.header{display:flex;justify-content:space-between;align-items:center}
+.export-btn{background:#14b8a6;padding:8px 12px;border-radius:8px;color:#fff;cursor:pointer}
+main{max-width:900px;margin:auto;padding:16px}
+.field{background:#fff;padding:12px;border-radius:12px;margin-bottom:12px;border:1px solid #e5e7eb}
+label{font-weight:600;display:block;margin-bottom:6px}
+input,select,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #e5e7eb}
+.error{background:#fff7cc;border-color:#f59e0b}
+.submit{background:#0f766e;color:#fff;padding:16px;border-radius:14px;text-align:center;font-weight:700;cursor:pointer}
+.submit.disabled{opacity:.5;pointer-events:none}
+.status{margin-top:12px;padding:10px;border-radius:10px;font-weight:700}
+.pending{background:#fef3c7;color:#92400e}
+.completed{background:#dcfce7;color:#166534}
 </style>
 </head>
 
 <body>
-<div class="container">
 
-<div class="counter" id="counter">
-Completed: 0 / 25 | Pending: 25
-</div>
+<header>
+  <div class="header">
+    <h2>Employee Entry</h2>
+    <div class="export-btn" onclick="location.href='export.html'">
+      <span class="material-icons">file_upload</span> Export
+    </div>
+  </div>
+  <div id="status" class="status pending">Pending 25</div>
+</header>
 
-<form id="employeeForm">
-
-<!-- REQUIRED FIELDS (25) -->
-
-<div class="card">
-<label>Father Name *</label>
-<input class="required" required>
-</div>
-
-<div class="card">
-<label>Mother Name *</label>
-<input class="required" required>
-</div>
-
-<div class="card">
-<label>Service Start Date *</label>
-<input type="date" class="required" required>
-</div>
-
-<div class="card">
-<label>Cell No *</label>
-<input class="required" required>
-</div>
-
-<div class="card">
-<label>Department *</label>
-<input class="required" required>
-</div>
-
-<div class="card">
-<label>Sub Department *</label>
-<input class="required" required>
-</div>
-
-<div class="card">
-<label>Grade *</label>
-<input class="required" required>
-</div>
-
-<div class="card">
-<label>Designation *</label>
-<input class="required" required>
-</div>
-
-<div class="card">
-<label>City *</label>
-<input class="required" required>
-</div>
-
-<div class="card">
-<label>Married *</label>
-<select class="required" required>
-<option value="">Select</option>
-<option>Yes</option>
-<option>No</option>
-</select>
-</div>
-
-<div class="card">
-<label>Religion *</label>
-<input class="required" required>
-</div>
-
-<!-- ADD REMAINING REQUIRED FIELDS HERE
-Total REQUIRED fields must be 25
-Just copy same pattern:
-<input class="required" required>
--->
-
-<!-- OPTIONAL FIELDS (NOT COUNTED) -->
-
-<div class="card">
-<label>Phone No 1</label>
-<input>
-</div>
-
-<div class="card">
-<label>Email</label>
-<input type="email">
-</div>
-
-<div class="card">
-<label>Blood Group</label>
-<input>
-</div>
-
-<div class="card">
-<label>Bank Account No</label>
-<input>
-</div>
-
-<div class="card">
-<label>Bank</label>
-<input>
-</div>
-
-<button type="submit">Submit</button>
-
-</form>
-</div>
+<main id="form"></main>
 
 <script>
-const requiredFields = document.querySelectorAll('.required');
-const counter = document.getElementById('counter');
-const total = requiredFields.length;
+const requiredFields=[
+"empId","name","gender","cnic","dob","cnicIssue","cnicExpiry",
+"presentAddress","permanentAddress","fatherName","motherName",
+"serviceStart","cellNo","phone1","email","department","subDepartment",
+"grade","designation","city","married","religion","bloodGroup",
+"bankAccount","bank"
+];
 
-function updateCounter(){
-  let filled = 0;
-  requiredFields.forEach(f=>{
-    if(f.value.trim() !== ""){
-      filled++;
-    }
-  });
-  counter.innerText = `Completed: ${filled} / ${total} | Pending: ${total-filled}`;
-}
+const fields=[
+["empId","Emp Id*"],
+["name","Name*"],
+["gender","Gender*","select",["Male","Female"]],
+["cnic","CNIC*"],
+["dob","Date of Birth*","date"],
+["cnicIssue","CNIC Issue Date*","date"],
+["cnicExpiry","CNIC Expiry Date*","date"],
+["presentAddress","Present Address*","textarea"],
+["permanentAddress","Permanent Address*","textarea"],
+["fatherName","Father Name*"],
+["motherName","Mother Name*"],
+["serviceStart","Service Start Date*","date"],
+["cellNo","Cell No*"],
+["phone1","Phone No 1*"],
+["email","Email*"],
+["department","Department*"],
+["subDepartment","SubDepartment*"],
+["grade","Grade*"],
+["designation","Designation*"],
+["city","City*"],
+["married","Married*","select",["Yes","No"]],
+["religion","Religion*"],
+["bloodGroup","Blood Group*"],
+["bankAccount","Bank Account No*"],
+["bank","Bank*"]
+];
 
-requiredFields.forEach(f=>{
-  f.addEventListener('input', updateCounter);
-  f.addEventListener('change', updateCounter);
+const form=document.getElementById("form");
+
+fields.forEach(f=>{
+  const [id,label,type,opts]=f;
+  const d=document.createElement("div"); d.className="field";
+  let el;
+  if(type==="select"){
+    el=document.createElement("select");
+    el.innerHTML="<option value=''>Select</option>"+opts.map(o=>`<option>${o}</option>`).join("");
+  }else if(type==="textarea"){
+    el=document.createElement("textarea");
+  }else{
+    el=document.createElement("input");
+    el.type=type==="date"?"date":"text";
+  }
+  el.id=id;
+  el.oninput=updateStatus;
+  d.innerHTML=`<label>${label}</label>`;
+  d.appendChild(el);
+  form.appendChild(d);
 });
 
-updateCounter();
+const submit=document.createElement("div");
+submit.className="submit disabled";
+submit.innerText="Submit Employee";
+submit.onclick=save;
+form.appendChild(submit);
+
+function updateStatus(){
+  let pending=0;
+  requiredFields.forEach(id=>{
+    const e=document.getElementById(id);
+    if(!e.value.trim()){
+      pending++;
+      e.classList.add("error");
+    }else e.classList.remove("error");
+  });
+  const s=document.getElementById("status");
+  if(pending===0){
+    s.className="status completed";
+    s.innerText="Form Completed";
+    submit.classList.remove("disabled");
+  }else{
+    s.className="status pending";
+    s.innerText="Pending "+pending;
+    submit.classList.add("disabled");
+  }
+}
+
+function save(){
+  const data={entryDate:new Date().toISOString()};
+  fields.forEach(f=>data[f[0]]=document.getElementById(f[0]).value);
+  const all=JSON.parse(localStorage.getItem("employees")||"[]");
+  all.push(data);
+  localStorage.setItem("employees",JSON.stringify(all));
+  alert("Employee saved successfully ✅");
+  document.querySelectorAll("input,textarea,select").forEach(e=>e.value="");
+  updateStatus();
+  scrollTo(0,0);
+}
+
+updateStatus();
 </script>
 
 </body>

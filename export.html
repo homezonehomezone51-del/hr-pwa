@@ -48,42 +48,56 @@ button:disabled{opacity:.5}
 </main>
 
 <script>
-const f=document.getElementById("from");
-const t=document.getElementById("to");
-const btn=document.getElementById("btn");
+const f = document.getElementById("from");
+const t = document.getElementById("to");
+const btn = document.getElementById("btn");
+const countEl = document.getElementById("count");
+const rangeEl = document.getElementById("range");
 
-const today=new Date();
-t.value=today.toISOString().split("T")[0];
-f.value=new Date(today-30*86400000).toISOString().split("T")[0];
+const today = new Date();
+t.value = today.toISOString().split("T")[0];
+f.value = new Date(today.getTime() - 30*86400000).toISOString().split("T")[0];
 
-[f,t].onchange=load;
+f.addEventListener("change", load);
+t.addEventListener("change", load);
 
 function load(){
-  const all=JSON.parse(localStorage.getItem("employees")||"[]");
-  const from=new Date(f.value), to=new Date(t.value);
-  const data=all.filter(e=>{
-    const d=new Date(e.entryDate);
-    return d>=from && d<=to;
+  const all = JSON.parse(localStorage.getItem("employees") || "[]");
+
+  const from = new Date(f.value);
+  const to = new Date(t.value);
+  to.setHours(23,59,59,999); // 🔴 IMPORTANT FIX
+
+  const data = all.filter(e=>{
+    if(!e.entryDate) return false;
+    const d = new Date(e.entryDate);
+    return d >= from && d <= to;
   });
-  document.getElementById("count").innerText=data.length;
-  document.getElementById("range").innerText=f.value+" — "+t.value;
-  btn.disabled=data.length===0;
-  btn.dataset.data=JSON.stringify(data);
+
+  countEl.innerText = data.length;
+  rangeEl.innerText = f.value + " — " + t.value;
+  btn.disabled = data.length === 0;
+  btn.dataset.data = JSON.stringify(data);
 }
-load();
 
 function exportCSV(){
-  const data=JSON.parse(btn.dataset.data);
-  const headers=Object.keys(data[0]);
-  const csv=[headers.join(",")].concat(
-    data.map(r=>headers.map(h=>`"${r[h]||""}"`).join(","))
-  ).join("\n");
-  const blob=new Blob([csv],{type:"text/csv"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="employees_export.csv";
+  const data = JSON.parse(btn.dataset.data || "[]");
+  if(!data.length) return;
+
+  const headers = Object.keys(data[0]);
+  const csv = [
+    headers.join(","),
+    ...data.map(r => headers.map(h => `"${(r[h]||"").replace(/"/g,'""')}"`).join(","))
+  ].join("\n");
+
+  const blob = new Blob([csv], {type:"text/csv"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "employees_export.csv";
   a.click();
 }
+
+load();
 </script>
 
 </body>
